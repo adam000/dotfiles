@@ -1,0 +1,215 @@
+# .zshrc shouild contain commands to set up aliases, functions, options, key bindings, etc.
+
+#############
+# Functions #
+#############
+
+# Make a directory and immediately cd into it
+mkcd() { mkdir "$1" ; cd "$1" }
+
+# Return value is 0 if the command exists and not otherwise
+command_exists() { command -v $1 &> /dev/null }
+
+# Swap two files in place, preserving names with the contents
+swap() {
+    if (( $# == 2 )); then
+        mv "$1" /tmp/
+        mv "$2" "`dirname $1`"
+        mv "/tmp/`basename $1`" "`dirname $2`"
+    else
+        echo "Usage: swap <file1> <file2>"
+        return -1
+    fi
+}
+
+# tmp TODO put where it should be
+alias -g zNoOut="21&> /dev/null"
+alias -g zNoErr="2&> /dev/null"
+alias -g zFoldErr= "2>&1"
+alias -g zErrOnly="1&> /dev/null"
+alias -g pager="| less"
+alias -g cleanHTML='-c "set sw=2 | %s/>/>\r/ | set ft=html | execute \"normal gg=G\" | set nohlsearch | g/^\\s*\$/d"'
+alias -g linecount='| wc -l'
+
+alias godoit="go build -v && $(basename $(pwd))"
+
+exp() {
+    echo $@ | tr ' ' '\n'
+}
+
+###################
+# Colorful prompt #
+###################
+
+autoload -U colors && colors
+
+# Allow for substitutions in the prompt
+setopt promptsubst
+
+# different prompts
+PROMPTz4=$'
+[%{%(?.%{\e[0;32m%}.%{\e[31m%})%}%*%{\e[0m%}] %(?..%{\e[31m%}E:$? )%{\e[35m%}(%{\e[0m%}%m%{\e[35m%})%{\e[0m%} %{\e[36m%}%~%{\e[0m%}
+%(!.#.Z) '
+
+PROMPTz5="
+[%{%(?.%F{green}.%F{red})%}%*%{$reset_color%}] %(?..%{%F{red}%}E:%? )%{%F{magenta}%}(%{$reset_color%}%m%{%F{magenta}%})%{$reset_color%} %{%F{cyan}%}%~%{$reset_color%}
+%(!.#.Z) "
+
+if $($SHELL --version | grep "zsh 5.") 21&> /dev/null; then
+    PROMPT=$PROMPTz5
+else
+    # not zsh version 5, assume 4
+    PROMPT=$PROMPTz4
+fi
+
+###################
+# Version Control #
+###################
+
+autoload -U is-at-least
+
+if is-at-least 4.3.10; then
+    autoload -Uz vcs_info
+    zstyle ':vcs_info:*' enable git hg
+    zstyle ':vcs_info:*' check-for-changes true
+
+    # TODO figure these out
+    zstyle ':vcs_info:*' get-revision true
+    # Work with Mercurial patch queues
+    zstyle ':vcs_info:*' get-mq true
+    zstyle ':vcs_info:*' use-prompt-escapes true
+
+    # Show a yellow `+` if there are unstaged changes
+    zstyle ':vcs_info:*' unstagedstr '%F{yellow}+%f'
+    # Show a green `*` if there are staged changes
+    zstyle ':vcs_info:*' stagedstr "%F{green}*%f"
+
+    precmd() {
+        # To get untracked files to show up as a red `-`
+        if [[ -z $(git ls-files --other --exclude-standard 2> /dev/null) ]]; then
+            zstyle ':vcs_info:*' formats '%b [%c%u]'
+        else
+            zstyle ':vcs_info:*' formats '%b [%c%u%F{red}-%f]'
+        fi
+        vcs_info
+    }
+
+    RPROMPT='$vcs_info_msg_0_'
+fi
+
+# vi bindings
+bindkey -v
+bindkey -M viins '^H' backward-delete-char
+bindkey -M viins '^?' backward-delete-char
+
+###########
+# Exports #
+###########
+
+export EDITOR=vim
+export VISUAL=vim
+
+export CLICOLOR=1
+
+###########
+# General #
+###########
+
+# Make cd implicit
+setopt autocd
+# Allow comments on the command line
+setopt interactivecomments
+
+# Keep 1000 lines of history within the shell and save it to ~/.zsh_history:
+setopt histignorealldups sharehistory extendedhistory
+HISTSIZE=1000
+SAVEHIST=1000
+HISTFILE=~/.zsh/.zsh_history
+alias history="history -i" # use YMD HH:MM history
+
+# TODO what's this do? (from default)
+# Use modern completion system
+autoload -Uz compinit
+compinit
+
+zstyle ':completion:*' auto-description 'specify: %d'
+zstyle ':completion:*' completer _expand _complete _correct _approximate
+zstyle ':completion:*' format 'Completing %d'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' menu select=2
+#eval "$(dircolors -b)"
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
+zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
+zstyle ':completion:*' menu select=long
+zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
+zstyle ':completion:*' use-compctl false
+zstyle ':completion:*' verbose true
+
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
+zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+
+###########
+# Aliases #
+###########
+
+alias ll="ls -la"
+alias :e="vim"
+alias :q="exit"
+alias :qall="tmux kill-session"
+alias vi="vim"
+
+# Typos
+alias sl="ls -F"
+
+# Quickly modifying this file
+alias modzsh="vim ~/.zsh/.zshrc"
+
+# See what I'm doing vs others
+alias wme="w | egrep --color=always '^|`whoami`.*$'"
+
+# Quickly add PWD to PATH
+alias ADD_PWD_TO_PATH='export PATH=$PWD:$PATH'
+
+# git stuffs
+st()
+{
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        git stash list | grep "`git rev-parse --abbrev-ref HEAD`"
+        git status -sb
+        if ! git diff --quiet; then
+            echo -e "+\t-\tfile"
+            git diff --numstat | cat
+        fi
+    else
+        return -1
+    fi;
+}
+
+# Blackforest
+if which blackforest &> /dev/null; then
+    alias B="blackforest"
+
+    # This is the default location. You can override it in ~/.zsh/local/.zshrc
+    export BLACKFOREST_PATH=~/scm/.cat
+    # don't forget to set BLACKFOREST_HOST in your ~/.zsh/local/.zshrc
+
+    Bcd() { cd "$(blackforest path "$1")"; return $? }
+    Binfo() { blackforest show "$1" | sed -n 's/^'"$2"':\s*//p'; return $? }
+fi
+
+# Sourcing other file(s)
+
+if [[ -e ~/.zsh/local/.zshrc ]]; then
+    . ~/.zsh/local/.zshrc
+
+    # Black Forest post-check
+    if which blackforest &> /dev/null && [[ -z "$BLACKFOREST_HOST" ]]; then
+        echo "ERROR: \$BLACKFOREST_HOST NOT SET. SET IT IN YOUR LOCAL ZSHRC"
+    fi
+fi
+
+if [[ -e ~/.tmux/autocomplete ]]; then
+    . ~/.tmux/autocomplete
+fi

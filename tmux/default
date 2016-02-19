@@ -1,0 +1,14 @@
+selectp -t 0
+split-window -h -p 80
+
+selectp -t 0
+split-window -v -p 25
+
+selectp -t 2
+split-window -v
+
+selectp -t 2
+split-window -h
+
+selectp -t 4
+split-window -h

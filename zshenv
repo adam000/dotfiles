@@ -1,0 +1,3 @@
+ZDOTDIR=~/.zsh
+
+. $ZDOTDIR/.zshenv

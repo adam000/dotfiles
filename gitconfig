@@ -1,0 +1,22 @@
+[user]
+    name = Adam Hintz
+    email = adamh.zero@gmail.com
+
+[alias]
+    hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+    fv = fetch -v
+    mg = merge --ff
+    glog = log --graph
+
+[github]
+    user = adam000
+    token = c9afa3269b1d0f8f897ab4cc3ba7f5c626020f6e
+
+[core]
+    excludesfile = /Users/atg/.gitignore
+
+[push]
+    default = current
+
+[branch]
+    autosetuprebase = always

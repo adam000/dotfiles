@@ -1,0 +1,9 @@
+# .zshenv is sourced on all invocations of the shell (unless -f is specified).
+# Set $PATH and other important enviornment variables.
+# Should not contain commands that produce output or assume the shell is attached to a tty.
+
+PATH=$PATH:~/bin/local:~/bin:.
+
+if [[ -e ~/.zsh/local/.zshenv ]]; then
+    . ~/.zsh/local/.zshenv
+fi

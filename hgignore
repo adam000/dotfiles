@@ -1,0 +1,13 @@
+syntax: glob
+
+*.out
+*.sw[op]
+.DS_Store
+*.xcuserdatad
+*.mode1v3
+*.pbxuser
+._*
+*.gch
+*.nfs*
+*.tmp
+*.pyc

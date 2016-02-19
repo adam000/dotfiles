@@ -1,0 +1,20 @@
+[ui]
+username = Adam Hintz <adamh.zero@gmail.com>
+ignore = ~/.hgignore
+
+[diff]
+git = True
+
+[pager]
+pager = less -FRSX
+
+[extensions]
+hgext.color =
+hgext.mq =
+hgext.pager =
+hgext.rebase =
+hgext.schemes =
+hgext.graphlog =
+
+[schemes]
+bb = ssh://hg@bitbucket.org/
