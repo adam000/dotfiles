@@ -1,2 +1,4 @@
+# vi keybindings
 bind -v
+# needed in vi keybindings for tab autocomplete
 bind \\t rl_complete
