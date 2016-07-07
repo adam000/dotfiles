@@ -163,13 +163,7 @@ alias vi="vim"
 # Typos
 alias sl="ls -F"
 
-# Quickly modifying this file
-alias modzsh="vim ~/.zsh/.zshrc"
-
-# See what I'm doing vs others
-alias wme="w | egrep --color=always '^|`whoami`.*$'"
-
-# Quickly add PWD to PATH
+# Quickly add PWD to the beginning of PATH
 alias ADD_PWD_TO_PATH='export PATH=$PWD:$PATH'
 
 # git stuffs
@@ -180,7 +174,10 @@ st()
         git status -sb
         if ! git diff --quiet; then
             echo -e "+\t-\tfile"
-            git diff --numstat | cat
+            git diff --numstat | awk '\
+                BEGIN { OFS="\t"; plus = 0; minus = 0; print "+\t-\tFILE" }\
+                      { plus += $1; minus += $2; print }\
+                END   { printf "\n"; print plus, minus }'
         fi
     else
         return -1
