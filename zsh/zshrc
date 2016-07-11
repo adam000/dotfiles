@@ -173,7 +173,6 @@ st()
         git stash list | grep "`git rev-parse --abbrev-ref HEAD`"
         git status -sb
         if ! git diff --quiet; then
-            echo -e "+\t-\tfile"
             git diff --numstat | awk '\
                 BEGIN { OFS="\t"; plus = 0; minus = 0; print "+\t-\tFILE" }\
                       { plus += $1; minus += $2; print }\
