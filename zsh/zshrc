@@ -176,7 +176,7 @@ st()
             git diff --numstat | awk '\
                 BEGIN { OFS="\t"; plus = 0; minus = 0; print "+\t-\tFILE" }\
                       { plus += $1; minus += $2; print }\
-                END   { printf "\n"; print plus, minus }'
+                END   { print plus, minus }'
         fi
     else
         return -1
