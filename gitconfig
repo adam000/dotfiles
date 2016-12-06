@@ -1,29 +1,34 @@
 [user]
-    name = Adam Hintz
-    email = adamh.zero@gmail.com
+	name = Adam Hintz
+	email = adamh.zero@gmail.com
 
 [alias]
-    lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
-    hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
-    fv = fetch -v
-    mg = merge --ff
-    glog = log --graph
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+	glog = log --graph
+	tags = tag
+	dif = diff --word-diff=color
 
 [github]
-    user = adam000
-    token = c9afa3269b1d0f8f897ab4cc3ba7f5c626020f6e
+	user = adam000
+	token = c9afa3269b1d0f8f897ab4cc3ba7f5c626020f6e
 
 [core]
-    excludesfile = /Users/atg/.gitignore
+	excludesfile = /Users/atg/.gitignore
+	whitespace = blank-at-eol,blank-at-eof,space-before-tab
+	pager = less -x5,9
 
 [push]
-    default = current
+	default = current
 
 [branch]
-    autosetuprebase = always
+	autosetuprebase = always
 
 [color]
-    diff = true
+	diff = auto
+	ui = auto
 
 [diff]
-    algorithm = patience
+	algorithm = patience
+
+[color "diff"]
+	whitespace = red reverse
