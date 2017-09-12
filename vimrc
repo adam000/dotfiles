@@ -158,6 +158,9 @@ nnoremap <leader><space> :noh<cr>
 " Toggle highlighting of the last search.
 noremap <Leader>h :set hlsearch! hlsearch?<CR>
 
+" Toggle between relative and not
+noremap <Leader>r :set relativenumber! relativenumber?<CR>
+
 " Toggle list characters
 set list
 let s:list_on=1
@@ -189,20 +192,20 @@ noremap <Leader>p :set paste!<CR>
 noremap <Leader>s :Scratch<CR>
 
 " strip all trailing whitespace in current file
-fun! StripTrailingWhitespaces()
-   let l = line(".")
-   let c = col(".")
-   %s/\s\+$//e
-   call cursor(l, c)
-endfun
-autocmd FileType * autocmd BufWritePre <buffer> :call StripTrailingWhitespaces()
-
-nnoremap <leader>W :call StripTrailingWhitespaces()<CR>
+"fun! StripTrailingWhitespaces()
+"   let l = line(".")
+"   let c = col(".")
+"   %s/\s\+$//e
+"   call cursor(l, c)
+"endfun
+"autocmd FileType * autocmd BufWritePre <buffer> :call StripTrailingWhitespaces()
+"
+"nnoremap <leader>W :call StripTrailingWhitespaces()<CR>
 
 nnoremap <leader><Tab> i<c-v><Tab><ESC>
 
-" Relative line numbers
-set relativenumber
+" Line numbers
+set number
 
 """"""""""""""
 " Navigation "
@@ -263,3 +266,5 @@ function! SearchCurrentWord()
    set hlsearch
    normal n
 endfunction
+
+let g:go_fmt_command = "goimports"
