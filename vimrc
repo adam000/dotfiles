@@ -30,18 +30,19 @@ fun! SetupVAM()
     let &rtp.=(empty(&rtp)?'':',').c.plugin_root_dir.'/vim-addon-manager'
 
     " Tell VAM which plugins to fetch & load:
-    call vam#ActivateAddons(['UltiSnips',
-                            \'Conque_Shell',
-                            \'Gundo',
-                            \'EasyMotion',
+    call vam#ActivateAddons([
                             \'commentary',
                             \'fugitive',
                             \'surround',
                             \'repeat',
-                            \'abolish',
                             \'fileline',
                             \'inkpot',
                             \], {'auto_install' : 0})
+                            "\'EasyMotion',
+                            "\'UltiSnips',
+                            "\'abolish',
+                            "\'Gundo',
+                            "\'Conque_Shell',
                             "\'vim-powerline',
                             "\'Solarized',
 endfun
