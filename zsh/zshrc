@@ -5,7 +5,7 @@
 #############
 
 # Make a directory and immediately cd into it
-mkcd() { mkdir "$1" ; cd "$1" }
+mkcd() { mkdir -p "$1" ; cd "$1" }
 
 # Return value is 0 if the command exists and not otherwise
 command_exists() { command -v $1 &> /dev/null }
