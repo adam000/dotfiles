@@ -37,6 +37,7 @@ fun! SetupVAM()
                             \'repeat',
                             \'fileline',
                             \'inkpot',
+                            \'git:git://github.com/fatih/vim-go.git',
                             \], {'auto_install' : 0})
                             "\'EasyMotion',
                             "\'UltiSnips',
