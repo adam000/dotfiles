@@ -9,7 +9,7 @@ set -u
 
 # Clone dotfiles
 sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get upgrade -y
 sudo apt-get install -y git
 mkdir ~/src
 cd ~/src
@@ -41,4 +41,5 @@ sudo apt-get install -y vim
 ln -s src/dotfiles/vimrc .vimrc
 
 # Need to change the shell to zsh
-echo "now run: chsh -s \$(which zsh)"
+echo "Now run: chsh -s \$(which zsh)"
+echo "And run vim once if you want to install all the necessary plugins"
