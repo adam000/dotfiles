@@ -7,10 +7,11 @@ set -o pipefail
 # Don't allow unset variables
 set -u
 
-# Clone dotfiles
 sudo apt-get update
 sudo apt-get upgrade -y
-sudo apt-get install -y git
+sudo apt-get install -y git openssh-server
+
+# Clone dotfiles
 mkdir ~/src
 cd ~/src
 git clone --depth=1 https://github.com/adam000/dotfiles.git
