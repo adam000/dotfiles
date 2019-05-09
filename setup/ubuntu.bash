@@ -29,12 +29,12 @@ cd ..
 
 # tmux
 sudo apt-get install -y tmux
-ln -s src/dotfiles/zsh/tmux.conf .tmux.conf
+ln -s src/dotfiles/tmux.conf .tmux.conf
 mkdir .tmux
 cd .tmux
-ln -s ../src/dotfiles/3grid 3grid
-ln -s ../src/dotfiles/autocomplete autocomplete
-ln -s ../src/dotfiles/default default
+ln -s ../src/dotfiles/tmux/3grid 3grid
+ln -s ../src/dotfiles/tmux/autocomplete autocomplete
+ln -s ../src/dotfiles/tmux/default default
 cd ..
 
 # vim
