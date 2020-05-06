@@ -41,6 +41,10 @@ cd ..
 sudo apt-get install -y vim
 ln -s src/dotfiles/vimrc .vimrc
 
+# git
+ln -s src/dotfiles/gitconfig .gitconfig
+ln -s src/dotfiles/gitignore .gitignore
+
 # Need to change the shell to zsh
 echo "Now run: chsh -s \$(which zsh)"
 echo "And run vim once if you want to install all the necessary plugins"
