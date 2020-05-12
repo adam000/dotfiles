@@ -269,4 +269,6 @@ function! SearchCurrentWord()
    normal n
 endfunction
 
+set clipboard=unnamedplus
+
 let g:go_fmt_command = "goimports"
