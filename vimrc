@@ -37,6 +37,8 @@ fun! SetupVAM()
                             \'repeat',
                             \'fileline',
                             \'inkpot',
+                            \'fontsize',
+                            \'git:git://github.com/PProvost/vim-ps1.git',
                             \'git:git://github.com/fatih/vim-go.git',
                             \], {'auto_install' : 0})
                             "\'EasyMotion',
@@ -66,7 +68,7 @@ nnoremap <F5> :GundoToggle<CR>
 set nocompatible
 
 " 'normal' backspacing
-set bs=2
+set backspace=2
 
 " Tab stuffs
 set tabstop=4
@@ -89,10 +91,11 @@ command! -bar -count=4 Spaces set ts=8 sts=<count> sw=<count> et
 set modeline
 
 " search at most 1 line for modelines (for top or bottom?)
-set mls=1
+set modelines=2
 
 " Always show statusline (due to powerline plugin's usefulness)
-set ls=2
+" Commented because not using powerline
+" set laststatus=2
 
 " show the ruler on the last line
 set ruler
@@ -118,9 +121,12 @@ if has("multi_byte")
   set fileencodings=ucs-bom,utf-8,latin1
 endif
 
-" Sends swap files to /tmp or /var/tmp, and make the swp file names unique by
-" dir
-set directory=/tmp//,/var/tmp//
+" Send swap files to a temporary dir, make the swp file names unique by dir
+if has('unix')
+    set directory=/tmp//,/var/tmp//
+else
+    set directory=C:\\Temp\\vim//
+endif
 
 " Always a buffer of 3 lines between the cursor and the top / bottom
 set scrolloff=3
@@ -191,8 +197,10 @@ noremap <Leader>m :exec &mouse == "a" ? ":set mouse=" : ":set mouse=a"<CR>
 noremap <Leader>p :set paste!<CR>
 
 " Open a scratch buffer.
-noremap <Leader>s :Scratch<CR>
+" Requires Scratch command?
+" noremap <Leader>s :Scratch<CR>
 
+" Why is this commented out?
 " strip all trailing whitespace in current file
 "fun! StripTrailingWhitespaces()
 "   let l = line(".")
@@ -204,6 +212,7 @@ noremap <Leader>s :Scratch<CR>
 "
 "nnoremap <leader>W :call StripTrailingWhitespaces()<CR>
 
+" Insert a tab character (even when spaces are the tab mode)
 nnoremap <leader><Tab> i<c-v><Tab><ESC>
 
 " Line numbers
@@ -257,7 +266,7 @@ colorscheme inkpot
 
 
 " Change behavior of *,g* so * searches for the word under the cursor anywhere
-" instead of just as a whle word. Also, strip trailing dash from word so a
+" instead of just as a whole word. Also, strip trailing dash from word so a
 " search with cursor on $blah->blah() still finds $blah (and the reverse)
 noremap * :call SearchCurrentWord()<CR>
 
@@ -269,6 +278,8 @@ function! SearchCurrentWord()
    normal n
 endfunction
 
-set clipboard=unnamedplus
+if (has('unix') && !has('macunix'))
+   set clipboard=unnamedplus
+endif
 
 let g:go_fmt_command = "goimports"
