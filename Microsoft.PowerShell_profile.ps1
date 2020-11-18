@@ -1,4 +1,4 @@
-$ProfileImportsFile = (Join-Path -Path $PSScriptRoot -ChildPath 'profile-imports.ps1')
+$ProfileImportsFile = (Join-Path -Path $PSScriptRoot -ChildPath 'profile-imports.txt')
 if (Test-Path $ProfileImportsFile) {
     # You need a local script in the same dir as $PROFILE with one line each for things to import, like this for posh-git, other local things
     # C:\path\to\posh-git\src\posh-git.psd1
