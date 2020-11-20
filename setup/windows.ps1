@@ -10,6 +10,8 @@
 
 cmd /c mklink $HOME\_vimrc (Join-Path -Path (pwd) -ChildPath "vimrc")
 cmd /c mklink $HOME\_gvimrc (Join-Path -Path (pwd) -ChildPath "gvimrc")
+cmd /c mklink $HOME\.gitignore (Join-Path -Path (pwd) -ChildPath "gitignore")
+cmd /c mklink $HOME\.gitconfig (Join-Path -Path (pwd) -ChildPath "gitconfig")
 if (!(Test-Path -path (Split-Path $PROFILE))) {
     New-Item -Type directory (Split-Path $PROFILE)
 }
