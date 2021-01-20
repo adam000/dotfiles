@@ -59,8 +59,13 @@ function st() {
     }
 }
 
+# fg - gives a Powershell Core equivalent for foregrounding processes
+function fg {
+    Get-Job | Where-Object { $_.State -ne "Completed" -or $_.HasMoreData } | Select-Object -first 1 | Receive-Job
+}
+
 function lsfunc() {
-    Get-ChildItem | Sort | Format-Wide
+    Get-ChildItem $args | Sort | Format-Wide
 }
 # Deleting an alias only does so for the current session
 del alias:ls
