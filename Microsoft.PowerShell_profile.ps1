@@ -75,7 +75,6 @@ del alias:sl -Force
 Set-Alias sl ls
 
 # Vi experience
-
 Set-PSReadLineOption -EditMode vi
 # Setting the cursor based on normal vs insert mode
 if ($PSVersionTable.PsEdition -eq 'Core') {
@@ -90,5 +89,8 @@ if ($PSVersionTable.PsEdition -eq 'Core') {
     }
 }
 function :q { exit }
+
+# More like Bash tab completion
+Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
 
 # vim: set ff=dos :
