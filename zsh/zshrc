@@ -159,6 +159,7 @@ alias :e="vim"
 alias :q="exit"
 alias :qall="tmux kill-session"
 alias vi="vim"
+alias dps="docker ps --format \"table {{.ID}}\\t{{.Image}}\\t{{.Status}}\\t{{.Names}}\""
 
 # Typos
 alias sl="ls -F"
