@@ -5,15 +5,15 @@
 fun! EnsureVamIsOnDisk(plugin_root_dir)
     let vam_autoload_dir = a:plugin_root_dir.'/vim-addon-manager/autoload'
     if isdirectory(vam_autoload_dir)
-    return 1
+        return 1
     else
-    if 1 == confirm("Clone VAM into ".a:plugin_root_dir."?","&Y\n&N")
-        call mkdir(a:plugin_root_dir, 'p')
-        execute '!git clone --depth=1 git://github.com/MarcWeber/vim-addon-manager '.
-                    \       shellescape(a:plugin_root_dir, 1).'/vim-addon-manager'
-        exec 'helptags '.fnameescape(a:plugin_root_dir.'/vim-addon-manager/doc')
-    endif
-    return isdirectory(vam_autoload_dir)
+        if 1 == confirm("Clone VAM into ".a:plugin_root_dir."?","&Y\n&N")
+            call mkdir(a:plugin_root_dir, 'p')
+            execute '!git clone --depth=1 git://github.com/MarcWeber/vim-addon-manager '.
+                        \       shellescape(a:plugin_root_dir, 1).'/vim-addon-manager'
+            exec 'helptags '.fnameescape(a:plugin_root_dir.'/vim-addon-manager/doc')
+        endif
+        return isdirectory(vam_autoload_dir)
     endif
 endfun
 
@@ -23,8 +23,8 @@ fun! SetupVAM()
     let c.plugin_root_dir = expand('$HOME/.vim/vim-addons')
 
     if !EnsureVamIsOnDisk(c.plugin_root_dir)
-    echohl ErrorMsg | echomsg "No VAM found!" | echohl NONE
-    return
+        echohl ErrorMsg | echomsg "No VAM found!" | echohl NONE
+        return
     endif
 
     let &rtp.=(empty(&rtp)?'':',').c.plugin_root_dir.'/vim-addon-manager'
@@ -38,20 +38,17 @@ fun! SetupVAM()
                             \'fileline',
                             \'inkpot',
                             \'fontsize',
-                            \'git:git://github.com/bkad/CamelCaseMotion.git',
+                            \'git:git://github.com/easymotion/vim-easymotion',
+                            \'git:git://github.com/aykamko/vim-easymotion-segments',
                             \'git:git://github.com/PProvost/vim-ps1.git',
                             \'git:git://github.com/fatih/vim-go.git',
                             \], {'auto_install' : 0})
-                            "\'EasyMotion',
-                            "\'UltiSnips',
-                            "\'abolish',
-                            "\'Gundo',
-                            "\'Conque_Shell',
-                            "\'vim-powerline',
-                            "\'Solarized',
 endfun
 
 call SetupVAM()
+
+" Vim: remap with 'map' by default
+set remap
 
 " Syntax highlighting
 syntax on
@@ -62,13 +59,10 @@ syntax on
 " Indentation by file type
 filetype plugin indent on
 
-" Gundo
-nnoremap <F5> :GundoToggle<CR>
-
 " not compatible with VI
 set nocompatible
 
-" 'normal' backspacing
+" 'normal' backspacing - delete a tab's worth if we're dealing with spaces
 set backspace=2
 
 " Tab stuffs
@@ -94,32 +88,20 @@ set modeline
 " search at most 1 line for modelines (for top or bottom?)
 set modelines=2
 
-" Always show statusline (due to powerline plugin's usefulness)
-" Commented because not using powerline
-" set laststatus=2
-
 " show the ruler on the last line
 set ruler
 
 " sed commands have /g by default
 set gdefault
 
-" Go's vim files
-set rtp+=$GOROOT/misc/vim
-
-" F1 doesn't show help
-nnoremap <F1> <Nop>
-inoremap <F1> <Nop>
-vnoremap <F1> <Nop>
-
 " Unicode
-if has("multi_byte")
-  if &termencoding == ""
-    let &termencoding = &encoding
-  endif
-  set encoding=utf-8
-  setglobal fileencoding=utf-8
-  set fileencodings=ucs-bom,utf-8,latin1
+if has('multi_byte')
+    if &termencoding == ""
+        let &termencoding = &encoding
+    endif
+    set encoding=utf-8
+    setglobal fileencoding=utf-8
+    set fileencodings=ucs-bom,utf-8,latin1
 endif
 
 " Send swap files to a temporary dir, make the swp file names unique by dir
@@ -155,6 +137,9 @@ set hlsearch
 :command WQ wq
 :command Wq wq
 
+" Allow saving of files as sudo when I forgot to start vim using sudo.
+cmap w!! w !sudo tee > /dev/null %
+
 """"""""""""""""""""""
 " Mapleader bindings "
 """"""""""""""""""""""
@@ -165,10 +150,10 @@ let mapleader = ","
 nnoremap <leader><space> :noh<cr>
 
 " Toggle highlighting of the last search.
-noremap <Leader>h :set hlsearch! hlsearch?<CR>
+noremap <leader>h :set hlsearch! hlsearch?<CR>
 
 " Toggle between relative and not
-noremap <Leader>r :set relativenumber! relativenumber?<CR>
+noremap <leader>r :set relativenumber! relativenumber?<CR>
 
 " Toggle list characters
 set list
@@ -197,16 +182,12 @@ noremap <Leader>m :exec &mouse == "a" ? ":set mouse=" : ":set mouse=a"<CR>
 " Toggle paste mode.
 noremap <Leader>p :set paste!<CR>
 
-" Open a scratch buffer.
-" Requires Scratch command?
-" noremap <Leader>s :Scratch<CR>
-
 " strip all trailing whitespace in current file
 fun! StripTrailingWhitespaces()
-   let l = line(".")
-   let c = col(".")
-   %s/\s\+$//e
-   call cursor(l, c)
+    let l = line(".")
+    let c = col(".")
+    %s/\s\+$//e
+    call cursor(l, c)
 endfun
 autocmd FileType * autocmd BufWritePre <buffer> :call StripTrailingWhitespaces()
 
@@ -229,8 +210,6 @@ nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
 
 " Going cold turkey on the arrow keys
-set remap
-
 map <up> <Nop>
 map <down> <Nop>
 map <left> <Nop>
@@ -243,45 +222,35 @@ noremap k gk
 " Make Y behave like other capitals - copy from cursor to EOL, not whole line
 nnoremap Y y$
 
-" Using a mouse, like a boss (including scrolling)
+inoremap jj <Esc>
+
+" Enable the mouse for clicking, scrolling, selecting, etc
 set mouse=a
 
-" CamelCaseMotion: word movement
+" EasyMotion
+if ! exists('g:in_vsvim')
+    map  / <Plug>(easymotion-sn)
+    omap / <Plug>(easymotion-tn)
 
-map <silent> w <Plug>CamelCaseMotion_w
-map <silent> b <Plug>CamelCaseMotion_b
-map <silent> e <Plug>CamelCaseMotion_e
-map <silent> ge <Plug>CamelCaseMotion_ge
-sunmap w
-sunmap b
-sunmap e
-sunmap ge
+    omap t <Plug>(easymotion-bd-tl)
 
-omap <silent> iw <Plug>CamelCaseMotion_iw
-xmap <silent> iw <Plug>CamelCaseMotion_iw
-omap <silent> ib <Plug>CamelCaseMotion_ib
-xmap <silent> ib <Plug>CamelCaseMotion_ib
-omap <silent> ie <Plug>CamelCaseMotion_ie
-xmap <silent> ie <Plug>CamelCaseMotion_ie
+    let g:EasyMotion_use_upper = 1
+    let g:EasyMotion_smartcase = 1
 
-" Read .love files like a browser? Heck yes
-au BufReadCmd *.love call zip#Browse(expand("<amatch>"))
-
-" LESS files!
-au BufNewFile,BufRead *.less set filetype=less
+    " EasyMotion Segments
+    map <leader>w <Plug>(easymotion-segments-LF)
+    map <leader>b <Plug>(easymotion-segments-LB)
+    map <leader>e <Plug>(easymotion-segments-RF)
+    map <leader>B <Plug>(easymotion-segments-RB)
+endif
 
 " Read local-machine-only settings
 let localrc = $HOME . '/.vimrclocal'
-
-if filereadable(localrc)
-    exe "source" localrc
+if (filereadable(localrc))
+    exec ('source ' . localrc)
 endif
 
-" The color of things
 colorscheme inkpot
-" colorscheme solarized
-" highlight Normal ctermfg=white ctermbg=black
-
 
 " Change behavior of *,g* so * searches for the word under the cursor anywhere
 " instead of just as a whole word. Also, strip trailing dash from word so a
@@ -289,15 +258,17 @@ colorscheme inkpot
 noremap * :call SearchCurrentWord()<CR>
 
 function! SearchCurrentWord()
-   " Strip dash from end of word
-   let cur_word = substitute(expand("<cword>"), '-$','','')
-   let @/ = cur_word
-   set hlsearch
-   normal n
+    " Strip dash from end of word
+    let cur_word = substitute(expand("<cword>"), '-$','','')
+    let @/ = cur_word
+    set hlsearch
+    normal n
 endfunction
 
 if (has('unix') && !has('macunix'))
-   set clipboard=unnamedplus
+    set clipboard=unnamedplus
 endif
 
-let g:go_fmt_command = "goimports"
+" Go
+let g:go_fmt_command = 'goimports'
+

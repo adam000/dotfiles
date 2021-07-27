@@ -1,0 +1,3 @@
+let g:in_vsvim = "true"
+
+source ~\_vimrc

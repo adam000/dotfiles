@@ -1,19 +1,30 @@
-# Comment this out unless testing -- reset
+param (
+    [switch]$Reset
+)
 
-#Remove-Item $HOME\_gvimrc -ErrorAction SilentlyContinue
-#Remove-Item $PROFILE -ErrorAction SilentlyContinue
-#Remove-Item $HOME\_vimrc -ErrorAction SilentlyContinue
+function mklink-if-not-exists {
+    param (
+        [string]$destination,
+        [string]$source
+    )
+    if ($Reset -and (Test-Path $destination)) {
+        Remove-Item -Path $destination
+    }
+    if (!(Test-Path $destination)) {
+        cmd /c mklink $destination $source
+    } else {
+        echo "Skipped making link because $destination already exists"
+    }
+}
 
-# END Comment this out...
-
-## Make links
-
-cmd /c mklink $HOME\_vimrc (Join-Path -Path (pwd) -ChildPath "vimrc")
-cmd /c mklink $HOME\_gvimrc (Join-Path -Path (pwd) -ChildPath "gvimrc")
-cmd /c mklink $HOME\.gitignore (Join-Path -Path (pwd) -ChildPath "gitignore")
-cmd /c mklink $HOME\.gitconfig (Join-Path -Path (pwd) -ChildPath "gitconfig")
+## Make links to RC files
+mklink-if-not-exists $HOME\_vimrc (Join-Path -Path (pwd) -ChildPath "vimrc")
+mklink-if-not-exists $HOME\_vsvimrc (Join-Path -Path (pwd) -ChildPath "vsvimrc")
+mklink-if-not-exists $HOME\_gvimrc (Join-Path -Path (pwd) -ChildPath "gvimrc")
+mklink-if-not-exists $HOME\.gitignore (Join-Path -Path (pwd) -ChildPath "gitignore")
+mklink-if-not-exists $HOME\.gitconfig (Join-Path -Path (pwd) -ChildPath "gitconfig")
 if (!(Test-Path -path (Split-Path $PROFILE))) {
     New-Item -Type directory (Split-Path $PROFILE)
 }
-cmd /c mklink $PROFILE (Join-Path -Path (pwd) -ChildPath "Microsoft.PowerShell_profile.ps1")
+mklink-if-not-exists $PROFILE (Join-Path -Path (pwd) -ChildPath "Microsoft.PowerShell_profile.ps1")
 
