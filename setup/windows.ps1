@@ -19,6 +19,7 @@ function mklink-if-not-exists {
 
 ## Make links to RC files
 mklink-if-not-exists $HOME\_vimrc (Join-Path -Path (pwd) -ChildPath "vimrc")
+mklink-if-not-exists $HOME\_vsvimrc (Join-Path -Path (pwd) -ChildPath "vsvimrc")
 mklink-if-not-exists $HOME\_gvimrc (Join-Path -Path (pwd) -ChildPath "gvimrc")
 mklink-if-not-exists $HOME\.gitignore (Join-Path -Path (pwd) -ChildPath "gitignore")
 mklink-if-not-exists $HOME\.gitconfig (Join-Path -Path (pwd) -ChildPath "gitconfig")
