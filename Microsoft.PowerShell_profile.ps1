@@ -4,13 +4,21 @@ if (Test-Path $ProfileImportsFile) {
     # C:\path\to\posh-git\src\posh-git.psd1
     # I set it up this way because I don't want the specific posh-git location on any machine to force the same location on other machines. And I didn't know a better way. This seems fine.
     Get-Content $ProfileImportsFile | ForEach-Object {
-        Import-Module $_
+        if ($_.substring(0,1) -ne '#') {
+            Import-Module $_
+        }
     }
 }
 
-$GitPromptSettings.DefaultPromptPrefix.Text = '$(Get-Date -f "HH:mm:ss") '
-$GitPromptSettings.DefaultPromptAbbreviateHomeDirectory = $false
-$GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
+if (!$EDITOR) {
+    $EDITOR = "gvim"
+}
+
+if ($GitPromptSettings -ne $null) {
+    $GitPromptSettings.DefaultPromptPrefix.Text = '$(Get-Date -f "HH:mm:ss") '
+    $GitPromptSettings.DefaultPromptAbbreviateHomeDirectory = $false
+    $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
+}
 
 function prompt {
     $lastResult = Invoke-Expression '$?'
@@ -59,6 +67,19 @@ function st() {
     }
 }
 
+# touch - A command I miss from bash
+function touch {
+    param (
+        [string] $Path
+    )
+    if (Test-Path $Path) {
+        # It exists, so update timestamp
+        (Get-Item $Path).LastWriteTime = Get-Date
+    } else {
+        New-Item -Type 'File' $Path
+    }
+}
+
 # fg - gives a Powershell Core equivalent for foregrounding processes
 function fg {
     Get-Job | Where-Object { $_.State -ne "Completed" -or $_.HasMoreData } | Select-Object -first 1 | Receive-Job
@@ -92,5 +113,14 @@ function :q { exit }
 
 # More like Bash tab completion
 Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+
+# Aliases for accessing Powershell history
+
+function Get-History-File { echo ((Get-PSReadLineOption).HistorySavePath) }
+function View-History { & $EDITOR (Get-History-File) }
+
+Set-Alias grep rg
+
+function mkcd($dir) { mkdir $dir && cd $dir }
 
 # vim: set ff=dos :
