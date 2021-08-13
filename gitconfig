@@ -25,3 +25,5 @@
 [include]
 	path = ~/.gitconfiglocal
 	path = ~/.gitconfiguser
+[init]
+	defaultBranch = main
