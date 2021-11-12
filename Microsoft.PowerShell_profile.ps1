@@ -121,6 +121,17 @@ function View-History { & $EDITOR (Get-History-File) }
 
 Set-Alias grep rg
 
+Set-Alias Real-Vim vim.bat
+Set-Alias vim gvim
+
+function gg() { git grep -i @args }
+
 function mkcd($dir) { mkdir $dir && cd $dir }
+
+# Chocolatey profile
+$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+if (Test-Path($ChocolateyProfile)) {
+  Import-Module "$ChocolateyProfile"
+}
 
 # vim: set ff=dos :
