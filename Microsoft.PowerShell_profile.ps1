@@ -127,17 +127,32 @@ function Set-PredictionList-Off {
 Set-PSReadLineOption -PredictionSource History
 Set-PredictionList-On
 
-# TODO since I've added predictions, it would be really nice to have a way to
-# nuke errant entries from the history (for example, if I typed `git statsu` once,
-# I don't want that showing up in my autocomplete)
-
 # More like Bash tab completion
 Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
 
 # Aliases for accessing Powershell history
 
-function Get-History-File { echo ((Get-PSReadLineOption).HistorySavePath) }
-function View-History { & $EDITOR (Get-History-File) }
+function Get-History-File() { echo ((Get-PSReadLineOption).HistorySavePath) }
+function View-History() { & $EDITOR (Get-History-File) }
+function History-Nuke {
+    param(
+        [Parameter(mandatory=$true)]
+        [string]$query
+    )
+    $results = Get-Content (Get-History-File) | Where-Object {$_ -match $query}
+    $numResults = $results.length
+    if ($results -is [array]) {
+        $results | Select -SkipLast 1 | ForEach-Object { Write-Host $_ }
+        $confirmation = Read-Host "Are you sure you would like to remove the above $numResults lines? [y/N]"
+        if ($confirmation -ne 'y') {
+            # Only get rid of History-Nuke lines
+            $query = "History-Nuke"
+        }
+        $backup = Join-Path -Path (Split-Path -Parent (Get-History-File)) -ChildPath "ConsoleHost_history_old.txt"
+        Copy-Item (Get-History-File) $backup
+        Get-Content $backup | Where-Object {$_ -notmatch $query} | Set-Content (Get-History-File)
+    }
+}
 
 Set-Alias grep rg
 
