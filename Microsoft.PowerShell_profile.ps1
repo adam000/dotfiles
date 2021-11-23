@@ -1,13 +1,19 @@
 $ProfileImportsFile = (Join-Path -Path $PSScriptRoot -ChildPath 'profile-imports.txt')
+# Set this to "true" to make sure importing of modules is working
+$verboseLoading = $false
 if (Test-Path $ProfileImportsFile) {
     # You need a local script in the same dir as $PROFILE with one line each for things to import, like this for posh-git, other local things
-    # C:\path\to\posh-git\src\posh-git.psd1
     # I set it up this way because I don't want the specific posh-git location on any machine to force the same location on other machines. And I didn't know a better way. This seems fine.
     Get-Content $ProfileImportsFile | ForEach-Object {
         if ($_.substring(0,1) -ne '#') {
             Import-Module $_
+            if ($verboseLoading) {
+                Write-Host "Loaded module $_"
+            }
         }
     }
+} elseif ($verboseLoading) {
+    Write-Host "No such file $ProfileImportsFile"
 }
 
 if (!$EDITOR) {
@@ -15,19 +21,18 @@ if (!$EDITOR) {
 }
 
 if ($GitPromptSettings -ne $null) {
+    $lastResult = Invoke-Expression '$?'
     $GitPromptSettings.DefaultPromptPrefix.Text = '$(Get-Date -f "HH:mm:ss") '
+    $GitPromptSettings.DefaultPromptPrefix.ForegroundColor = 'Green'
     $GitPromptSettings.DefaultPromptAbbreviateHomeDirectory = $false
     $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
 }
 
 function prompt {
     $lastResult = Invoke-Expression '$?'
-    $dateColorization = @{
-        ForegroundColor = "Green"
-        NoNewline = $True
-    }
+    $fgColor = "Green"
     if (!$lastResult) {
-        $dateColorization.ForegroundColor = "Red"
+        $fgColor = "Red"
     }
     # Normally one would use Write-Output to return the formatted string, but Write-Output does not have the -ForegroundColor parameter
     $lastResultString = ""
@@ -37,7 +42,8 @@ function prompt {
         $lastResultString = "($lastResult) "
     }
     Write-Host
-    Write-Host @dateColorization $lastResultString
+    Write-Host -ForegroundColor $fgColor -NoNewline $lastResultString
+    $GitPromptSettings.DefaultPromptPrefix.ForegroundColor = $fgColor
     # This is returned as the prompt
     & $GitPromptScriptBlock
 }
@@ -110,6 +116,20 @@ if ($PSVersionTable.PsEdition -eq 'Core') {
     }
 }
 function :q { exit }
+
+# Predictive completion - https://www.hanselman.com/blog/adding-predictive-intellisense-to-my-windows-terminal-powershell-prompt-with-psreadline and then some
+function Set-PredictionList-On {
+    Set-PSReadLineOption -PredictionViewStyle ListView
+}
+function Set-PredictionList-Off {
+    Set-PSReadLineOption -PredictionViewStyle InlineView
+}
+Set-PSReadLineOption -PredictionSource History
+Set-PredictionList-On
+
+# TODO since I've added predictions, it would be really nice to have a way to
+# nuke errant entries from the history (for example, if I typed `git statsu` once,
+# I don't want that showing up in my autocomplete)
 
 # More like Bash tab completion
 Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
