@@ -1,13 +1,19 @@
 $ProfileImportsFile = (Join-Path -Path $PSScriptRoot -ChildPath 'profile-imports.txt')
+# Set this to "true" to make sure importing of modules is working
+$verboseLoading = $false
 if (Test-Path $ProfileImportsFile) {
     # You need a local script in the same dir as $PROFILE with one line each for things to import, like this for posh-git, other local things
-    # C:\path\to\posh-git\src\posh-git.psd1
     # I set it up this way because I don't want the specific posh-git location on any machine to force the same location on other machines. And I didn't know a better way. This seems fine.
     Get-Content $ProfileImportsFile | ForEach-Object {
         if ($_.substring(0,1) -ne '#') {
             Import-Module $_
+            if ($verboseLoading) {
+                Write-Host "Loaded module $_"
+            }
         }
     }
+} elseif ($verboseLoading) {
+    Write-Host "No such file $ProfileImportsFile"
 }
 
 if (!$EDITOR) {
@@ -15,19 +21,18 @@ if (!$EDITOR) {
 }
 
 if ($GitPromptSettings -ne $null) {
+    $lastResult = Invoke-Expression '$?'
     $GitPromptSettings.DefaultPromptPrefix.Text = '$(Get-Date -f "HH:mm:ss") '
+    $GitPromptSettings.DefaultPromptPrefix.ForegroundColor = 'Green'
     $GitPromptSettings.DefaultPromptAbbreviateHomeDirectory = $false
     $GitPromptSettings.DefaultPromptBeforeSuffix.Text = '`n'
 }
 
 function prompt {
     $lastResult = Invoke-Expression '$?'
-    $dateColorization = @{
-        ForegroundColor = "Green"
-        NoNewline = $True
-    }
+    $fgColor = "Green"
     if (!$lastResult) {
-        $dateColorization.ForegroundColor = "Red"
+        $fgColor = "Red"
     }
     # Normally one would use Write-Output to return the formatted string, but Write-Output does not have the -ForegroundColor parameter
     $lastResultString = ""
@@ -37,7 +42,8 @@ function prompt {
         $lastResultString = "($lastResult) "
     }
     Write-Host
-    Write-Host @dateColorization $lastResultString
+    Write-Host -ForegroundColor $fgColor -NoNewline $lastResultString
+    $GitPromptSettings.DefaultPromptPrefix.ForegroundColor = $fgColor
     # This is returned as the prompt
     & $GitPromptScriptBlock
 }
@@ -111,13 +117,42 @@ if ($PSVersionTable.PsEdition -eq 'Core') {
 }
 function :q { exit }
 
+# Predictive completion - https://www.hanselman.com/blog/adding-predictive-intellisense-to-my-windows-terminal-powershell-prompt-with-psreadline and then some
+function Set-PredictionList-On {
+    Set-PSReadLineOption -PredictionViewStyle ListView
+}
+function Set-PredictionList-Off {
+    Set-PSReadLineOption -PredictionViewStyle InlineView
+}
+Set-PSReadLineOption -PredictionSource History
+Set-PredictionList-On
+
 # More like Bash tab completion
 Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
 
 # Aliases for accessing Powershell history
 
-function Get-History-File { echo ((Get-PSReadLineOption).HistorySavePath) }
-function View-History { & $EDITOR (Get-History-File) }
+function Get-History-File() { echo ((Get-PSReadLineOption).HistorySavePath) }
+function View-History() { & $EDITOR (Get-History-File) }
+function History-Nuke {
+    param(
+        [Parameter(mandatory=$true)]
+        [string]$query
+    )
+    $results = Get-Content (Get-History-File) | Where-Object {$_ -match $query}
+    $numResults = $results.length
+    if ($results -is [array]) {
+        $results | Select -SkipLast 1 | ForEach-Object { Write-Host $_ }
+        $confirmation = Read-Host "Are you sure you would like to remove the above $numResults lines? [y/N]"
+        if ($confirmation -ne 'y') {
+            # Only get rid of History-Nuke lines
+            $query = "History-Nuke"
+        }
+        $backup = Join-Path -Path (Split-Path -Parent (Get-History-File)) -ChildPath "ConsoleHost_history_old.txt"
+        Copy-Item (Get-History-File) $backup
+        Get-Content $backup | Where-Object {$_ -notmatch $query} | Set-Content (Get-History-File)
+    }
+}
 
 Set-Alias grep rg
 
