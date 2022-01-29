@@ -7,3 +7,9 @@ PATH=$PATH:~/bin/local:~/bin:.
 if [[ -e ~/.zsh/local/.zshenv ]]; then
     . ~/.zsh/local/.zshenv
 fi
+
+if [[ -d /docker ]]; then
+    DOCKER_ROOT=/docker
+else
+    DOCKER_ROOT=~/docker
+fi
