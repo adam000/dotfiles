@@ -31,18 +31,18 @@ fun! SetupVAM()
 
     " Tell VAM which plugins to fetch & load:
     call vam#ActivateAddons([
-                            \'commentary',
-                            \'fugitive',
-                            \'surround',
-                            \'repeat',
-                            \'fileline',
-                            \'inkpot',
-                            \'fontsize',
-                            \'git:git://github.com/easymotion/vim-easymotion',
-                            \'git:git://github.com/aykamko/vim-easymotion-segments',
-                            \'git:git://github.com/PProvost/vim-ps1.git',
-                            \'git:git://github.com/fatih/vim-go.git',
+                            \'git:https://github.com/tpope/vim-commentary',
+                            \'git:https://github.com/tpope/vim-fugitive',
+                            \'git:https://github.com/tpope/vim-surround',
+                            \'git:https://github.com/tpope/vim-repeat',
+                            \'git:https://github.com/ciaranm/inkpot',
+                            \'git:https://github.com/drmikehenry/vim-fontsize',
+                            \'git:https://github.com/easymotion/vim-easymotion',
+                            \'git:https://github.com/aykamko/vim-easymotion-segments',
+                            \'git:https://github.com/PProvost/vim-ps1.git',
+                            \'git:https://github.com/fatih/vim-go.git',
                             \], {'auto_install' : 0})
+                            "\'fileline',
 endfun
 
 call SetupVAM()
