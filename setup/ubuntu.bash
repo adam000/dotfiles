@@ -23,7 +23,7 @@ if ! which tmux; then
     ln -s ../src/dotfiles/tmux/default default
     cd ..
     echo "Please run this script again in tmux (in case there's a disconect)"
-elif [[ -n "$TMUX" ]]; then
+elif [[ -z "${TMUX-}" ]]; then
     echo "tmux is installed but you're not using it. If you really want to"
     echo "skip using tmux, run this command again prefixed by 'TMUX=skip'"
 else
