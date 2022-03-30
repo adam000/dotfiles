@@ -68,3 +68,4 @@ else
     echo "Now run: chsh -s \$(which zsh)"
     echo "And run vim once if you want to install all the necessary plugins"
 fi
+
