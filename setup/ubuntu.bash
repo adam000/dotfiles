@@ -54,6 +54,13 @@ else
     ln -s ../src/dotfiles/tmux/3grid 3grid
     ln -s ../src/dotfiles/tmux/autocomplete autocomplete
     ln -s ../src/dotfiles/tmux/default default
+
+    # tpm - tmux plugin manager
+    mkdir plugins
+    cd .tmux/plugins
+    git clone https://github.com/tmux-plugins/tpm.git
+    cd ..
+
     cd ..
 
     # vim
