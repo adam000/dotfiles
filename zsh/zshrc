@@ -220,6 +220,6 @@ fi
 if which kubectl > /dev/null; then
     alias k="kubectl"
     source <(k completion zsh)
-    complete -F __start_kubectl k
+    compinit -F __start_kubectl k
 fi
 
