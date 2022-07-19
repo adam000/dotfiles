@@ -101,6 +101,23 @@ Set-Alias ls lsfunc
 del alias:sl -Force
 Set-Alias sl ls
 
+# tail - because I can never remember the equivalent Get-Content
+function tail() {
+    param (
+        [Parameter(Mandatory=$True)]
+        [string] $Path,
+        [Int32] $n = 10,
+        [switch] $f
+    )
+    $args = @{
+        Path = $Path;
+        Tail = $n;
+        Wait = $f;
+    }
+
+    Get-Content @args
+}
+
 # Vi experience
 Set-PSReadLineOption -EditMode vi
 # Setting the cursor based on normal vs insert mode

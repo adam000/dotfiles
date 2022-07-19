@@ -1,4 +1,5 @@
 {
+    "$help": "https://aka.ms/terminal-documentation",
     "$schema": "https://aka.ms/terminal-profiles-schema",
     "actions": 
     [
@@ -41,13 +42,11 @@
         [
             {
                 "background": "#014A77",
-                "commandline": "powershell.exe",
                 "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
                 "hidden": false,
                 "name": "Windows PowerShell (OLD)"
             },
             {
-                "commandline": "cmd.exe",
                 "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
                 "hidden": false,
                 "name": "Command Prompt"
@@ -107,6 +106,18 @@
                 "guid": "{a60b85a3-d662-4195-aa1e-94136541980c}",
                 "name": "git bash",
                 "startingDirectory": "%USERPROFILE%"
+            },
+            {
+                "guid": "{069d8878-2cba-5ed1-a955-03193bfd73ed}",
+                "hidden": false,
+                "name": "Developer Command Prompt for VS 2022",
+                "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{185530eb-0fb2-5ccd-81e3-b9646616aa25}",
+                "hidden": false,
+                "name": "Developer PowerShell for VS 2022",
+                "source": "Windows.Terminal.VisualStudio"
             }
         ]
     },
