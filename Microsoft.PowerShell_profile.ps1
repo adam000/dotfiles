@@ -171,6 +171,22 @@ function History-Nuke {
     }
 }
 
+function Encode-Base64 {
+    param(
+        [Parameter(mandatory=$true)]
+        [string]$data
+    )
+    [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($data))
+}
+
+function Decode-Base64 {
+    param(
+        [Parameter(mandatory=$true)]
+        [string]$data
+    )
+    [Text.Encoding]::Utf8.GetString([Convert]::FromBase64String($data))
+}
+
 Set-Alias grep rg
 
 Set-Alias Real-Vim vim.bat
