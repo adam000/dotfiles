@@ -8,6 +8,7 @@ function mklink-if-not-exists {
         [string]$source,
         [bool]$override = $false
     )
+    Write-Host "Linking $source to $destination"
     if ($Reset -and (Test-Path $destination)) {
         Remove-Item -Path $destination
     }
@@ -17,9 +18,9 @@ function mklink-if-not-exists {
         $linkType = (dir $destination).LinkType
         $notSymlink = ($linkType -ne $null) -and ($linkType.ToString() -ne "SymbolicLink")
         if ($notSymlink) {
-            echo "[WARNING] Skipped making link because $destination is already a file, but it's not a symlink"
+            Write-Host "[WARNING] Skipped making link because $destination is already a file, but it's not a symlink"
         } elseif ($notSymlink -and (!$override)) {
-            echo "[OK] Skipped making link because $destination is already a symlink"
+            Write-Host "[OK] Skipped making link because $destination is already a symlink"
         } else {
             rm $destination
             cmd /c mklink $destination $source
@@ -27,9 +28,13 @@ function mklink-if-not-exists {
     } else {
         cmd /c mklink $destination $source
     }
+    Write-Host "Done"
 }
 
 ## Make links to RC files
+
+Write-Host "NOTE: Any call to mklink requires admin privileges, so make sure you're running this as Admin if you're getting errors"
+
 mklink-if-not-exists $HOME\_vimrc (Join-Path -Path (pwd) -ChildPath "vimrc")
 mklink-if-not-exists $HOME\_vsvimrc (Join-Path -Path (pwd) -ChildPath "vsvimrc")
 mklink-if-not-exists $HOME\_gvimrc (Join-Path -Path (pwd) -ChildPath "gvimrc")
