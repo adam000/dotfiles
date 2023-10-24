@@ -57,7 +57,7 @@ else
 
     # tpm - tmux plugin manager
     mkdir plugins
-    cd .tmux/plugins
+    cd plugins
     git clone https://github.com/tmux-plugins/tpm.git
     cd ..
 
