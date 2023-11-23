@@ -22,20 +22,7 @@ swap() {
     fi
 }
 
-# tmp TODO put where it should be
-alias -g zNoOut="21&> /dev/null"
-alias -g zNoErr="2&> /dev/null"
-alias -g zFoldErr= "2>&1"
-alias -g zErrOnly="1&> /dev/null"
-alias -g pager="| less"
 alias -g cleanHTML='-c "set sw=2 | %s/>/>\r/ | set ft=html | execute \"normal gg=G\" | set nohlsearch | g/^\\s*\$/d"'
-alias -g linecount='| wc -l'
-
-alias godoit="go build -v && $(basename $(pwd))"
-
-exp() {
-    echo $@ | tr ' ' '\n'
-}
 
 ###################
 # Colorful prompt #
@@ -131,7 +118,6 @@ SAVEHIST=10000
 HISTFILE=~/.zsh/.zsh_history
 alias history="history -i" # use YMD HH:MM history
 
-# TODO what's this do? (from default)
 # Use modern completion system
 autoload -Uz compinit
 compinit
@@ -168,9 +154,6 @@ alias dps="docker ps --format \"table {{.ID}}\\t{{.Image}}\\t{{.Status}}\\t{{.Na
 # Typos
 alias sl="ls -F"
 
-# Quickly add PWD to the beginning of PATH
-alias ADD_PWD_TO_PATH='export PATH=$PWD:$PATH'
-
 # git stuffs
 st()
 {
@@ -188,27 +171,10 @@ st()
     fi;
 }
 
-# Blackforest
-if which blackforest &> /dev/null; then
-    alias B="blackforest"
-
-    # This is the default location. You can override it in ~/.zsh/local/.zshrc
-    export BLACKFOREST_PATH=~/scm/.cat
-    # don't forget to set BLACKFOREST_HOST in your ~/.zsh/local/.zshrc
-
-    Bcd() { cd "$(blackforest path "$1")"; return $? }
-    Binfo() { blackforest show "$1" | sed -n 's/^'"$2"':\s*//p'; return $? }
-fi
-
 # Sourcing other file(s)
 
 if [[ -e ~/.zsh/local/.zshrc ]]; then
     . ~/.zsh/local/.zshrc
-
-    # Black Forest post-check
-    if which blackforest &> /dev/null && [[ -z "$BLACKFOREST_HOST" ]]; then
-        echo "ERROR: \$BLACKFOREST_HOST NOT SET. SET IT IN YOUR LOCAL ZSHRC"
-    fi
 fi
 
 if [[ -e ~/.tmux/autocomplete ]]; then
@@ -216,10 +182,10 @@ if [[ -e ~/.tmux/autocomplete ]]; then
 fi
 
 # Kubernetes
+# NOTE: this was interfering with tmux autocomplete in my testing.
 
-if which kubectl > /dev/null; then
-    alias k="kubectl"
-    source <(k completion zsh)
-    compinit -F __start_kubectl k
-fi
-
+#if which kubectl > /dev/null; then
+#    alias k="kubectl"
+#    source <(k completion zsh)
+#    compinit -F __start_kubectl k
+#fi
