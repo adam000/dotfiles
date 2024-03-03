@@ -76,6 +76,6 @@ else
 
     # Need to change the shell to zsh
     echo "Now run: chsh -s \$(which zsh)"
-    echo "And run vim once if you want to install all the necessary plugins"
+    echo "And run vim and :PlugInstall once if you want to install all the necessary plugins"
 fi
 
