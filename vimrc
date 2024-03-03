@@ -31,12 +31,6 @@ fun! SetupVAM()
 
     " Tell VAM which plugins to fetch & load:
     call vam#ActivateAddons([
-                            \'commentary',
-                            \'fugitive',
-                            \'surround',
-                            \'repeat',
-                            \'fileline',
-                            \'inkpot',
                             \], {'auto_install' : 0})
                             "\'EasyMotion',
                             "\'UltiSnips',
@@ -47,7 +41,20 @@ fun! SetupVAM()
                             "\'Solarized',
 endfun
 
-call SetupVAM()
+" call SetupVAM()
+
+call plug#begin()
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-repeat'
+Plug 'ciaranm/inkpot'
+Plug 'drmikehenry/vim-fontsize'
+Plug 'easymotion/vim-easymotion'
+Plug 'aykamko/vim-easymotion-segments'
+Plug 'PProvost/vim-ps1'
+Plug 'fatih/vim-go'
+call plug#end()
 
 " Vim: remap with 'map' by default
 set remap
