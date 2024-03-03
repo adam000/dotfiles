@@ -66,6 +66,9 @@ else
     # vim
     sudo apt-get install -y vim
     ln -s src/dotfiles/vimrc .vimrc
+    VIMPLUG_VERSION=0.12.0
+    mkdir -p ~/.vim/autoload
+    cp src/dotfiles/vim-plug/$VIMPLUG_VERSION ~/.vim/autoload/plug.vim
 
     # git
     ln -s src/dotfiles/gitconfig .gitconfig
