@@ -189,3 +189,25 @@ fi
 #    source <(k completion zsh)
 #    compinit -F __start_kubectl k
 #fi
+
+######
+## Section: zplug
+######
+
+source ~/.zplug/init.zsh
+
+# Output how long commands take to run, if longer than 3 seconds
+zplug "popstas/zsh-command-time"
+ZSH_COMMAND_TIME_EXCLUDE=(vim mcedit less more top htop)
+
+# Install plugins if there are plugins that have not been installed
+if ! zplug check --verbose; then
+    printf "Install? [y/N]: "
+    if read -q; then
+        echo; zplug install
+    fi
+fi
+
+zplug load
+# To check loading:
+#zplug load --verbose
