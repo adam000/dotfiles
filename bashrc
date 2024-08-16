@@ -119,9 +119,13 @@ alias ci="git commit -a -m"
 if [[ -e ~/.localbashrc ]]; then
     . ~/.localbashrc
 fi
+if [[ -e ~/.zsh/local/.zshenv ]]; then
+    . ~/.zsh/local/.zshenv
+fi
 
 # bashrc loaded. Set the variable
 
 export BASHRC_LOADED=0
+
 
 # vim: set ts=2 sw=2:
