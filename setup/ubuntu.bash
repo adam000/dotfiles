@@ -28,7 +28,16 @@ elif [[ -z "${TMUX-}" ]]; then
     echo "skip using tmux, run this command again prefixed by 'TMUX=skip'"
 else
     echo "Bootstrap phase 2/2: install everything else"
-    sudo apt-get install -y git openssh-server htop tree
+    sudo apt-get install -y git  htop tree
+
+    # I don't know if this is the best way to do this. In a test, this connects
+    # to port 22 (SSH) and waits for 1 seconds. If the connection is successful,
+    # this returns 0, otherwise it returns 1.
+    if nc -w 1 localhost 22; then
+        echo "🟡 Port 22 is already being listened to; assuming you don't want openssh-server installed"
+        echo "(hint: maybe you're on WSL and something is already using the port?)"
+    else
+        sudo apt-get install -y openssh-server
 
     # Clone dotfiles
     mkdir ~/src
@@ -45,6 +54,11 @@ else
     ln -s ../src/dotfiles/zsh/zshenv .zshenv
     ln -s ../src/dotfiles/zsh/zlogin .zlogin
     cd ..
+
+    # zplug
+    export ZPLUG_HOME=$HOME/.zplug
+    ZPLUG_VERSION=2.4.2
+    git clone --depth=1 --branch $ZPLUG_VERSION https://github.com/zplug/zplug.git
 
     # tmux
     sudo apt-get install -y tmux
