@@ -38,6 +38,7 @@ else
         echo "(hint: maybe you're on WSL and something is already using the port?)"
     else
         sudo apt-get install -y openssh-server
+    fi
 
     # Clone dotfiles
     mkdir ~/src
