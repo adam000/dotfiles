@@ -36,17 +36,17 @@ setopt promptsubst
 # different prompts
 PROMPTz4=$'
 [%{%(?.%{\e[0;32m%}.%{\e[31m%})%}%*%{\e[0m%}] %(?..%{\e[31m%}E:$? )%{\e[35m%}(%{\e[0m%}%m%{\e[35m%})%{\e[0m%} %{\e[36m%}%~%{\e[0m%}
-%(!.#.Z) '
+%(!.#.Z4) '
 
 PROMPTz5="
-[%{%(?.%F{green}.%F{red})%}%*%{$reset_color%}] %(?..%{%F{red}%}E:%? )%{%F{magenta}%}(%{$reset_color%}%m%{%F{magenta}%})%{$reset_color%} %{%F{cyan}%}%~%{$reset_color%}
+[%{%(?.%F{green}.%F{red})%}%*%{$reset_color%}] %(?..%{%F{red}%}E:%? )%{%F{magenta}%}(%{$reset_color%}%F{blue}%n%{$reset_color%}@%m%{%F{magenta}%})%{$reset_color%} %{%F{cyan}%}%~%{$reset_color%}
 %(!.#.Z) "
 
 if [[ "$SHELL" == "" ]]; then
     SHELL=$(which zsh)
 fi
 
-if $($SHELL --version | grep "zsh 5.") 21&> /dev/null; then
+if $SHELL --version | grep "zsh 5." > /dev/null; then
     PROMPT=$PROMPTz5
 else
     # not zsh version 5, assume 4
