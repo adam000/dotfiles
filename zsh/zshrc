@@ -181,6 +181,11 @@ if [[ -e ~/.tmux/autocomplete ]]; then
     . ~/.tmux/autocomplete
 fi
 
+# Docker compose - I find myself using `dc` far too often after work
+if docker compose version &> /dev/null; then
+    alias dc="docker compose"
+fi
+
 # Kubernetes
 # NOTE: this was interfering with tmux autocomplete in my testing.
 
