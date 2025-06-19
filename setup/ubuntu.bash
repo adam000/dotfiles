@@ -35,7 +35,8 @@ else
     # this returns 0, otherwise it returns 1.
     if nc -w 1 localhost 22; then
         echo "🟡 Port 22 is already being listened to; assuming you don't want openssh-server installed"
-        echo "(hint: maybe you're on WSL and something is already using the port?)"
+        echo "   or already have it installed"
+        echo "   (hint: maybe you're on WSL and something is already using the port?)"
     else
         sudo apt-get install -y openssh-server
     fi
@@ -59,7 +60,7 @@ else
     # zplug
     export ZPLUG_HOME=$HOME/.zplug
     ZPLUG_VERSION=2.4.2
-    git clone --depth=1 --branch $ZPLUG_VERSION https://github.com/zplug/zplug.git
+    git clone --depth=1 --branch $ZPLUG_VERSION https://github.com/zplug/zplug.git .zplug
 
     # tmux
     sudo apt-get install -y tmux
