@@ -28,7 +28,7 @@ elif [[ -z "${TMUX-}" ]]; then
     echo "skip using tmux, run this command again prefixed by 'TMUX=skip'"
 else
     echo "Bootstrap phase 2/2: install everything else"
-    sudo apt-get install -y git  htop tree
+    sudo apt-get install -y git htop tree zoxide fzf
 
     # I don't know if this is the best way to do this. In a test, this connects
     # to port 22 (SSH) and waits for 1 seconds. If the connection is successful,

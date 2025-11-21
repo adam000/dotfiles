@@ -196,6 +196,20 @@ fi
 #fi
 
 ######
+## zoxide
+######
+
+# Init zoxide
+if which zoxide 2>&1 > /dev/null; then
+    if which fzf 2>&1 > /dev/null; then
+        export _ZO_FZF_OPTS="--select-1"
+        eval "$(zoxide init zsh)"
+    else
+        echo "zoxide is installed but fzf is not. Zoxide has not been loaded"
+    fi
+fi
+
+######
 ## Section: zplug
 ######
 
