@@ -71,7 +71,8 @@ filetype plugin indent on
 " not compatible with VI
 set nocompatible
 
-" 'normal' backspacing - delete a tab's worth if we're dealing with spaces
+" 'normal' backspacing - delete a tab's worth if we're dealing with spaces.
+" Only needed for Vi compatibility.
 set backspace=2
 
 " Tab stuffs

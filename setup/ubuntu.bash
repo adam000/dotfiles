@@ -86,12 +86,18 @@ else
     mkdir -p ~/.vim/autoload
     cp src/dotfiles/vim-plug/$VIMPLUG_VERSION ~/.vim/autoload/plug.vim
 
+    # neovim
+    sudo apt-get install -y neovim
+    mkdir -p ~/.config/nvim
+    ln -s src/dotfiles/config/nvim/init.lua ~/.config/nvim/init.lua
+
     # git
     ln -s src/dotfiles/gitconfig .gitconfig
     ln -s src/dotfiles/gitignore .gitignore
 
     # Need to change the shell to zsh
-    echo "Now run: chsh -s \$(which zsh)"
-    echo "And run vim and :PlugInstall once if you want to install all the necessary plugins"
+    echo "Now run: \`chsh -s \$(which zsh)\`"
+    echo "And run \`vim\` and :PlugInstall once if you want to install all the necessary plugins"
+    echo "And run \`nvim\` to install its plugins"
 fi
 
