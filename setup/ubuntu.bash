@@ -10,11 +10,7 @@ set -u
 sudo apt-get update
 sudo apt-get upgrade -y
 
-if ! which tmux; then
-    echo "Bootstrap phase 1/2: intall tmux"
-    # Install tmux, then quit and tell the user to do it again in tmux
-    # (got burned by disconnecting setups one to many times)
-    sudo apt-get install -y tmux
+if ![[ -d "~/.tmux" ]]; then
     ln -s src/dotfiles/tmux.conf .tmux.conf
     mkdir .tmux
     cd .tmux
@@ -22,13 +18,20 @@ if ! which tmux; then
     ln -s ../src/dotfiles/tmux/autocomplete autocomplete
     ln -s ../src/dotfiles/tmux/default default
     cd ..
-    echo "Please run this script again in tmux (in case there's a disconect)"
+fi
+
+if ! which tmux; then
+    echo "Bootstrap phase 1/2: intall tmux"
+    # Install tmux, then quit and tell the user to do it again in tmux
+    # (got burned by disconnecting setups one to many times)
+    sudo apt-get install -y tmux
+    echo "Please run this script again in tmux (in case there's a disconnect)"
 elif [[ -z "${TMUX-}" ]]; then
     echo "tmux is installed but you're not using it. If you really want to"
     echo "skip using tmux, run this command again prefixed by 'TMUX=skip'"
 else
     echo "Bootstrap phase 2/2: install everything else"
-    sudo apt-get install -y git htop tree zoxide fzf
+    sudo apt-get install -y zsh git htop tree zoxide fzf tmux
 
     # I don't know if this is the best way to do this. In a test, this connects
     # to port 22 (SSH) and waits for 1 seconds. If the connection is successful,
@@ -42,42 +45,38 @@ else
     fi
 
     # Clone dotfiles
-    mkdir ~/src
-    cd ~/src
-    git clone --depth=1 https://github.com/adam000/dotfiles.git
-    cd ..
+    if ! [[ -e ~/src/dotfiles ]]; then
+      mkdir ~/src
+      cd ~/src
+      git clone --depth=1 https://github.com/adam000/dotfiles.git
+      cd ..
+    fi
 
     # zsh
-    sudo apt-get install -y zsh
-    ln -s src/dotfiles/zshenv .zshenv
-    mkdir .zsh
-    cd .zsh
-    ln -s ../src/dotfiles/zsh/zshrc .zshrc
-    ln -s ../src/dotfiles/zsh/zshenv .zshenv
-    ln -s ../src/dotfiles/zsh/zlogin .zlogin
-    cd ..
+    if ! [[ -d .zsh ]]; then
+      ln -s src/dotfiles/zshenv .zshenv
+      mkdir .zsh
+      cd .zsh
+      ln -s ../src/dotfiles/zsh/zshrc .zshrc
+      ln -s ../src/dotfiles/zsh/zshenv .zshenv
+      ln -s ../src/dotfiles/zsh/zlogin .zlogin
+      cd ..
+    fi
 
     # zplug
-    export ZPLUG_HOME=$HOME/.zplug
-    ZPLUG_VERSION=2.4.2
-    git clone --depth=1 --branch $ZPLUG_VERSION https://github.com/zplug/zplug.git .zplug
-
-    # tmux
-    sudo apt-get install -y tmux
-    ln -s src/dotfiles/tmux.conf .tmux.conf
-    mkdir .tmux
-    cd .tmux
-    ln -s ../src/dotfiles/tmux/3grid 3grid
-    ln -s ../src/dotfiles/tmux/autocomplete autocomplete
-    ln -s ../src/dotfiles/tmux/default default
+    if ! [[ -d ".zplug" ]]; then
+      export ZPLUG_HOME=$HOME/.zplug
+      ZPLUG_VERSION=2.4.2
+      git clone --depth=1 --branch $ZPLUG_VERSION https://github.com/zplug/zplug.git .zplug
+    fi
 
     # tpm - tmux plugin manager
-    mkdir plugins
-    cd plugins
-    git clone https://github.com/tmux-plugins/tpm.git
-    cd ..
-
-    cd ..
+    if ! [[ -d plugins ]]; then
+      mkdir plugins
+      cd plugins
+      git clone https://github.com/tmux-plugins/tpm.git
+      cd ..
+    fi
 
     # vim
     sudo apt-get install -y vim
