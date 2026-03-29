@@ -11,6 +11,18 @@ function tm() {
     fi
 }
 
+function tmk() {
+    if tmux has -t $1; then
+        tmux kill-session -t $1
+    fi
+}
+
+# Rename the current session
+function tmr() {
+    ! [[ -z "$TMUX" ]] && tmux rename-session $1
+}
+
+
 function __tmux-sessions() {
     local expl
     local -a sessions
@@ -19,3 +31,4 @@ function __tmux-sessions() {
 }
 
 compdef __tmux-sessions tm
+compdef __tmux-sessions tmk
