@@ -17,7 +17,7 @@ if (Test-Path $ProfileImportsFile) {
 }
 
 if (!$EDITOR) {
-    $EDITOR = "gvim"
+    $EDITOR = "neovide"
 }
 
 if ($GitPromptSettings -ne $null) {
@@ -190,11 +190,13 @@ function Decode-Base64 {
 Set-Alias grep rg
 
 Set-Alias Real-Vim vim.bat
-Set-Alias vim gvim
+Set-Alias vim neovide
 
 function gg() { git grep -i @args }
 
 function mkcd($dir) { mkdir $dir && cd $dir }
+
+function dc() { docker compose @args }
 
 # Chocolatey profile
 $ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"

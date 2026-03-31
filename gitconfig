@@ -9,7 +9,8 @@
 	pager = less -x5,9
 	longpaths = true
 [push]
-	default = current
+	default = upstream
+	autoSetupRemote = true
 [branch]
 	autosetuprebase = always
 [color]
