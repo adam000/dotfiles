@@ -35,9 +35,6 @@ function mklink-if-not-exists {
 
 Write-Host "NOTE: Any call to mklink requires admin privileges, so make sure you're running this as Admin if you're getting errors"
 
-mklink-if-not-exists $HOME\_vimrc (Join-Path -Path (pwd) -ChildPath "vimrc")
-mklink-if-not-exists $HOME\_vsvimrc (Join-Path -Path (pwd) -ChildPath "vsvimrc")
-mklink-if-not-exists $HOME\_gvimrc (Join-Path -Path (pwd) -ChildPath "gvimrc")
 mklink-if-not-exists $HOME\.gitignore (Join-Path -Path (pwd) -ChildPath "gitignore")
 mklink-if-not-exists $HOME\.gitconfig (Join-Path -Path (pwd) -ChildPath "gitconfig")
 
@@ -45,15 +42,10 @@ $nvimConfigPath="$HOME\AppData\Local\nvim"
 if (!(Test-Path -path $nvimConfigPath)) {
     New-Item -Type directory $nvimConfigPath
 }
-mklink-if-not-exists "$nvimConfigPath\init.lua" (Join-Path -Path (pwd) -ChildPath "init.lua")
+mklink-if-not-exists "$nvimConfigPath\init.lua" (Join-Path -Path (pwd) -ChildPath "config\nvim\init.lua")
 
 if (!(Test-Path -path (Split-Path $PROFILE))) {
     New-Item -Type directory (Split-Path $PROFILE)
 }
 mklink-if-not-exists $PROFILE (Join-Path -Path (pwd) -ChildPath "Microsoft.PowerShell_profile.ps1")
 
-$winTermSettings = "$HOME\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
-$dir = Split-Path -Parent $winTermSettings
-if (Test-Path -Path $dir) {
-    mklink-if-not-exists $winTermSettings (Join-Path -Path (pwd) -ChildPath "Windows Terminal\settings.json") $true
-}
