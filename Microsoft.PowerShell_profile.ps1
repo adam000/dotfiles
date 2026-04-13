@@ -204,4 +204,66 @@ if (Test-Path($ChocolateyProfile)) {
   Import-Module "$ChocolateyProfile"
 }
 
+# psmux equivalents to tm
+if (Get-Command psmux -ErrorAction SilentlyContinue) {
+    function tm() {
+        param(
+            [string]$sessionName
+        )
+        if (!$sessionName) {
+            psmux list-sessions
+        } else {
+            $sessions = psmux list-sessions | ForEach-Object { $_.Split(':')[0] }
+            if ($sessions -contains $sessionName) {
+                if ($env:TMUX) {
+                    psmux switch-client -t $sessionName
+                } else {
+                    psmux attach-session -t $sessionName
+                }
+            } else {
+                psmux new-session -s $sessionName
+            }
+        }
+    }
+
+    function tmk() {
+        param(
+            [Parameter(mandatory=$true)]
+            [string]$sessionName
+        )
+        $sessions = psmux list-sessions | ForEach-Object { $_.Split(':')[0] }
+        if ($sessions -contains $sessionName) {
+            psmux kill-session -t $sessionName
+        } else {
+            Write-Host "No such session $sessionName"
+        }
+    }
+
+    function tmr() {
+        param(
+            [Parameter(mandatory=$true)]
+            [string]$newName
+        )
+        if ($env:TMUX) {
+            psmux rename-session $newName
+        } else {
+            Write-Host "Not in a tmux session; this renames the current session"
+        }
+    }
+
+    # Add autocomplete for sessionName based on the output of `psmux list-sessions`
+    $psmuxSessionCompleter = {
+        param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameters)
+        $sessions = psmux list-sessions | ForEach-Object { $_.Split(':')[0] } | Where-Object { $_ -like "*$wordToComplete*" }
+        if ($sessions) {
+            $sessions | ForEach-Object { [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_) }
+        } else {
+            [Console]::Beep()
+            [System.Management.Automation.CompletionResult]::new('(none)', '(no sessions)', 'ParameterValue', 'No psmux sessions found')
+        }
+    }
+    Register-ArgumentCompleter -CommandName tm -ParameterName sessionName -ScriptBlock $psmuxSessionCompleter
+    Register-ArgumentCompleter -CommandName tmk -ParameterName sessionName -ScriptBlock $psmuxSessionCompleter
+}
+
 # vim: set ff=dos :
