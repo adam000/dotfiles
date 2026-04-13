@@ -37,6 +37,7 @@ Write-Host "NOTE: Any call to mklink requires admin privileges, so make sure you
 
 mklink-if-not-exists $HOME\.gitignore (Join-Path -Path (pwd) -ChildPath "gitignore")
 mklink-if-not-exists $HOME\.gitconfig (Join-Path -Path (pwd) -ChildPath "gitconfig")
+mklink-if-not-exists $HOME\.tmux.conf (Join-Path -Path (pwd) -ChildPath "tmux.conf")
 
 $nvimConfigPath="$HOME\AppData\Local\nvim"
 if (!(Test-Path -path $nvimConfigPath)) {

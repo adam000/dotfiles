@@ -233,15 +233,43 @@ vim.api.nvim_create_user_command(
   }
 )
 
+-- Use :T to open a terminal in a new tab. If arguments are provided, run the command in the terminal.
+-- The "!" command is a built-in Ex command and cannot be overwritten or shadowed with a user command.
+vim.api.nvim_create_user_command("T", function(opts)
+  if #opts.fargs == 0 then
+    vim.cmd("tabnew | startinsert | terminal")
+  else
+    local cmd = table.concat(opts.fargs, " ")
+    vim.cmd("tabnew | terminal " .. cmd)
+  end
+end, { nargs = "*", desc = "Run shell command in new tab terminal" })
+-- By default, `<Esc>` kills the tab when the Terminal has exited in Terminal mode.
+-- This remap makes it more like normal `<Esc>` behavior, where it just exits Terminal mode and leaves the terminal buffer open.
+vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+
 ---------------------------
 -- Filetype-specific config
 ---------------------------
+
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "go",
   callback = function()
     vim.cmd("Tabs 4")
   end,
 })
+
+---------------------
+-- OS-specific config
+---------------------
+
+local os_name = jit.os
+
+if os_name == "Windows" then
+  vim.opt.shell = "pwsh"
+  vim.opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command"
+  vim.opt.shellquote = ""
+  vim.opt.shellxquote = ""
+end
 
 ------------------------
 -- Local-specific config
