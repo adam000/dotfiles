@@ -266,4 +266,66 @@ if (Get-Command psmux -ErrorAction SilentlyContinue) {
     Register-ArgumentCompleter -CommandName tmk -ParameterName sessionName -ScriptBlock $psmuxSessionCompleter
 }
 
+# Zoxide
+if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+    Invoke-Expression (& { (zoxide init powershell | Out-String) })
+} else {
+    Write-Host "You should install Zoxide"
+}
+
+# Import a .env file into the current environment.
+function Import-Env {
+    param(
+        [string]$path = ".env",
+        [switch]$Override
+    )
+    if (-not (Test-Path $path)) {
+        Write-Warning "File $path not found."
+        return
+    }
+
+    $toSet = @()
+    foreach ($line in Get-Content $path) {
+        if ($line -match '^[^#\s]+=[^#]+') {
+            $name, $value = $line.split('=', 2).Trim()
+            $existing = [System.Environment]::GetEnvironmentVariable($name)
+            if ($existing -ne $value) {
+                $toSet += [PSCustomObject]@{ Name = $name; Value = $value; OldValue = $existing }
+            }
+        }
+    }
+
+    if (-not $Override) {
+        $conflicts = $toSet | Where-Object { $null -ne $_.OldValue }
+        if ($conflicts.Count -gt 0) {
+            Write-Host "The following environment variables are already set and will be overridden:"
+            $conflicts | Sort-Object Name | ForEach-Object { Write-Host "  $($_.Name)" }
+            $choice = Read-Host "Apply all (A), Inspect each conflict (I), or Cancel (C)? [a/i/C]"
+            switch ($choice.Trim().ToUpper()) {
+                'A' { <# proceed with all #> }
+                'I' {
+                    $approved = [System.Collections.Generic.List[object]]::new()
+                    foreach ($item in $toSet) {
+                        if ($null -ne $item.OldValue) {
+                            Write-Host "  $($item.Name): '$($item.OldValue)' -> '$($item.Value)'"
+                            $confirm = Read-Host "  Override? [y/N]"
+                            if ($confirm.Trim().ToUpper() -eq 'Y') {
+                                $approved.Add($item)
+                            }
+                        } else {
+                            $approved.Add($item)
+                        }
+                    }
+                    $toSet = $approved
+                }
+                default { Write-Host "Cancelled."; return }
+            }
+        }
+    }
+
+    foreach ($item in $toSet) {
+        Set-Item -Path "env:$($item.Name)" -Value $item.Value
+    }
+}
+
 # vim: set ff=dos :
