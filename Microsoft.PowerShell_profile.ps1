@@ -20,7 +20,7 @@ if (!$EDITOR) {
     $EDITOR = "neovide"
 }
 
-if ($GitPromptSettings -ne $null) {
+if ($null -ne $GitPromptSettings) {
     $lastResult = Invoke-Expression '$?'
     $GitPromptSettings.DefaultPromptPrefix.Text = '$(Get-Date -f "HH:mm:ss") '
     $GitPromptSettings.DefaultPromptPrefix.ForegroundColor = 'Green'
@@ -60,8 +60,8 @@ function st() {
         if (!$?) {
             $changes = git diff --numstat | ConvertFrom-Csv -Header "Adds", "Dels", "File" -Delimiter "`t"
             $totals = [PSCustomObject]@{
-                Adds = $changes | Foreach-Object { $adds = 0 } { $adds += $_.Adds } { $adds };
-                Dels = $changes | Foreach-Object { $dels = 0 } { $dels += $_.Dels } { $dels };
+                Adds = [int]($changes | Measure-Object -Property Adds -Sum).Sum;
+                Dels = [int]($changes | Measure-Object -Property Dels -Sum).Sum;
                 File = "TOTAL";
             }
             # Add a dashed line above total, and make sure it's an Object array because one change would be Object, not Object[]
@@ -92,13 +92,13 @@ function fg {
 }
 
 function lsfunc() {
-    Get-ChildItem $args | Sort | Format-Wide
+    Get-ChildItem $args | Sort-Object | Format-Wide
 }
 # Deleting an alias only does so for the current session
-del alias:ls
+Remove-Item alias:ls -Force
 Set-Alias ls lsfunc
 
-del alias:sl -Force
+Remove-Item alias:sl -Force
 Set-Alias sl ls
 
 # tail - because I can never remember the equivalent Get-Content
@@ -109,13 +109,13 @@ function tail() {
         [Int32] $n = 10,
         [switch] $f
     )
-    $args = @{
+    $arguments = @{
         Path = $Path;
         Tail = $n;
         Wait = $f;
     }
 
-    Get-Content @args
+    Get-Content @arguments
 }
 
 # Vi experience
@@ -149,9 +149,9 @@ Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
 
 # Aliases for accessing Powershell history
 
-function Get-History-File() { echo ((Get-PSReadLineOption).HistorySavePath) }
-function View-History() { & $EDITOR (Get-History-File) }
-function History-Nuke {
+function Get-History-File() { Write-Output ((Get-PSReadLineOption).HistorySavePath) }
+function Show-History() { & $EDITOR (Get-History-File) }
+function Remove-History {
     param(
         [Parameter(mandatory=$true)]
         [string]$query
@@ -159,7 +159,7 @@ function History-Nuke {
     $results = Get-Content (Get-History-File) | Where-Object {$_ -match $query}
     $numResults = $results.length
     if ($results -is [array]) {
-        $results | Select -SkipLast 1 | ForEach-Object { Write-Host $_ }
+        $results | Select-Object -SkipLast 1 | ForEach-Object { Write-Host $_ }
         $confirmation = Read-Host "Are you sure you would like to remove the above $numResults lines? [y/N]"
         if ($confirmation -ne 'y') {
             # Only get rid of History-Nuke lines
@@ -171,7 +171,7 @@ function History-Nuke {
     }
 }
 
-function Encode-Base64 {
+function ConvertTo-Base64 {
     param(
         [Parameter(mandatory=$true)]
         [string]$data
@@ -179,7 +179,7 @@ function Encode-Base64 {
     [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($data))
 }
 
-function Decode-Base64 {
+function ConvertFrom-Base64 {
     param(
         [Parameter(mandatory=$true)]
         [string]$data
@@ -194,7 +194,7 @@ Set-Alias vim neovide
 
 function gg() { git grep -i @args }
 
-function mkcd($dir) { mkdir $dir && cd $dir }
+function mkcd($dir) { mkdir $dir && Set-Location $dir }
 
 function dc() { docker compose @args }
 
