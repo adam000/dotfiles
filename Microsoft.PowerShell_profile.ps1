@@ -299,7 +299,7 @@ function Import-Env {
         $conflicts = $toSet | Where-Object { $null -ne $_.OldValue }
         if ($conflicts.Count -gt 0) {
             Write-Host "The following environment variables are already set and will be overridden:"
-            $conflicts | Sort-Object Name | ForEach-Object { Write-Host "  $($_.Name)" }
+            $conflicts | Sort-Object -Property Name | Format-Wide -Property Name
             $choice = Read-Host "Apply all (A), Inspect each conflict (I), or Cancel (C)? [a/i/C]"
             switch ($choice.Trim().ToUpper()) {
                 'A' { <# proceed with all #> }
@@ -325,6 +325,11 @@ function Import-Env {
 
     foreach ($item in $toSet) {
         Set-Item -Path "env:$($item.Name)" -Value $item.Value
+    }
+
+    if ($toSet.Count -gt 0) {
+        Write-Host "Updated:"
+        $toSet | Sort-Object -Property Name | Format-Wide -Property Name
     }
 }
 
