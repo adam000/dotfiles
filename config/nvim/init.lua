@@ -264,6 +264,65 @@ vim.api.nvim_create_user_command("Promote", function(opts)
   vim.cmd("quit!")
 end, { bang = true, desc = "Promote current buffer to Neovide from nvim" })
 
+local hard_wrap_enabled = false
+local hard_wrap_width
+
+local function hard_wrap_status()
+  if hard_wrap_enabled then
+    vim.notify("Hard wrap enabled at " .. hard_wrap_width .. " columns")
+  else
+    vim.notify("Hard wrap disabled")
+  end
+end
+
+local function hard_wrap_default_width()
+  local colorcolumn = tonumber(vim.opt.colorcolumn:get())
+  if colorcolumn and colorcolumn > 1 then
+    return colorcolumn - 1
+  end
+
+  return 80
+end
+
+vim.api.nvim_create_user_command(
+  'HardWrap',
+  function(opts)
+    local width
+    if opts.args == "?" then
+      hard_wrap_status()
+      return
+    elseif opts.args ~= "" then
+      width = tonumber(opts.args)
+      if not width or width < 1 or width % 1 ~= 0 then
+        vim.notify("HardWrap width must be a positive whole number", vim.log.levels.ERROR)
+        return
+      end
+      hard_wrap_enabled = true
+      hard_wrap_width = width
+    else
+      hard_wrap_enabled = not hard_wrap_enabled
+      hard_wrap_width = hard_wrap_width or hard_wrap_default_width()
+    end
+
+    if hard_wrap_enabled then
+      vim.opt.textwidth = hard_wrap_width
+      vim.opt.formatoptions:append('t')
+      if tonumber(vim.opt.colorcolumn:get()) ~= hard_wrap_width + 1 then
+        vim.opt.colorcolumn = tostring(hard_wrap_width + 1)
+      end
+    else
+      vim.opt.textwidth = 0
+      vim.opt.formatoptions:remove('t')
+    end
+
+    hard_wrap_status()
+  end,
+  {
+    nargs = '?',
+    desc = "Toggle or set hard wrapping",
+  }
+)
+
 -- Use :T to open a terminal in a new tab. If arguments are provided, run the command in the terminal.
 -- The "!" command is a built-in Ex command and cannot be overwritten or shadowed with a user command.
 vim.api.nvim_create_user_command("T", function(opts)
