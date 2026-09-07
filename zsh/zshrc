@@ -183,7 +183,41 @@ fi
 
 # Docker compose - I find myself using `dc` far too often after work
 if docker compose version &> /dev/null; then
-    alias dc="docker compose"
+    dc() {
+        if [[ -n "$COMPOSE_DEFAULT_FILE" ]]; then
+            local has_file_option=false
+
+            case "${1-}" in
+                -f|--file|-f*|--file=*)
+                    has_file_option=true
+                    break
+                    ;;
+            esac
+
+            if [[ "$has_file_option" == true ]]; then
+                command docker compose "$@"
+                return
+            fi
+
+            echo "docker compose -f \"$COMPOSE_DEFAULT_FILE\" \"$@\""
+            command docker compose -f "$COMPOSE_DEFAULT_FILE" "$@"
+        else
+            command docker compose "$@"
+        fi
+    }
+
+    dc-default() {
+        if [[ "$1" == "--unset" ]]; then
+            unset COMPOSE_DEFAULT_FILE
+            echo "Unset default compose file"
+        elif (( $# == 1 )); then
+            COMPOSE_DEFAULT_FILE="$1"
+            echo "Setting default compose file to '$COMPOSE_DEFAULT_FILE'"
+        else
+            echo "Usage: dc-default <file> | --unset"
+            echo "Default compose file for \`dc\` is '$COMPOSE_DEFAULT_FILE'"
+        fi
+    }
 fi
 
 # Kubernetes
@@ -230,3 +264,6 @@ fi
 zplug load
 # To check loading:
 #zplug load --verbose
+
+# opencode
+export PATH=/Users/atg/.opencode/bin:$PATH
