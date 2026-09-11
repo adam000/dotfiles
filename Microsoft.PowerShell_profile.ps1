@@ -60,7 +60,7 @@ function st() {
     if ($?) {
         # List stashes
         git stash list | Select-String -Pattern (git rev-parse --abbrev-ref HEAD)
-        git status -sb
+        git status -sb @args
 
         git diff --quiet | Out-Null
         if (!$?) {

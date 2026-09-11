@@ -159,7 +159,7 @@ st()
 {
     if git rev-parse --git-dir > /dev/null 2>&1; then
         git stash list | grep "`git rev-parse --abbrev-ref HEAD`"
-        git status -sb
+        git status -sb "$@"
         if ! git diff --quiet; then
             git diff --numstat | awk '\
                 BEGIN { OFS="\t"; plus = 0; minus = 0; print "+\t-\tFILE" }\
