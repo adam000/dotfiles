@@ -79,6 +79,32 @@ function st() {
     }
 }
 
+# wc - because I can never remember Measure-Object
+function wc {
+    param (
+        [switch] $w,
+        [switch] $l,
+        [switch] $c,
+        [string] $Path
+    )
+
+    $measureParams = @{}
+    if ($w) { $measureParams['Word'] = $true }
+    if ($l) { $measureParams['Line'] = $true }
+    if ($c) { $measureParams['Character'] = $true }
+    if ($measureParams.Count -eq 0) {
+        $measureParams['Word'] = $true
+        $measureParams['Line'] = $true
+        $measureParams['Character'] = $true
+    }
+
+    if ($Path) {
+        Get-Content $Path | Measure-Object @measureParams
+    } else {
+        $input | Measure-Object @measureParams
+    }
+}
+
 # touch - A command I miss from bash
 function touch {
     param (
